@@ -119,17 +119,18 @@
 
 - (void)setupFloatLabel
 {
-    // floatLabel
-    _floatLabel = [UILabel new];
-    _floatLabel.textColor = [UIColor blackColor];
+	// colors
+	//_floatLabelPassiveColor = [UIColor lightGrayColor];
+	_floatLabelActiveColor = [UIColor blueColor];
+	
+	// floatLabel
+	_floatLabel = [UILabel new];
+    _floatLabel.textColor = self.textColor;
     _floatLabel.font =[UIFont boldSystemFontOfSize:12.0f];
     _floatLabel.alpha = 0.0f;
     [_floatLabel setCenter:CGPointMake(_xOrigin, _verticalPadding)];
-    [self addSubview:_floatLabel];
-    
-    // colors
-    _floatLabelPassiveColor = [UIColor lightGrayColor];
-    _floatLabelActiveColor = [UIColor blueColor];
+	[self addSubview:_floatLabel];
+	
     
     // animationDuration
     _floatLabelAnimationDuration = @0.25;
@@ -201,6 +202,14 @@
                             _horizontalPadding,
                             0.0f,
                             _horizontalPadding);
+}
+
+- (UIEdgeInsets)editingFloatLabelInsets
+{
+	return UIEdgeInsetsMake(_floatLabel.font.lineHeight + (_horizontalPadding / 2),
+							_horizontalPadding,
+							0.0f,
+							_horizontalPadding);
 }
 
 - (void)textDidChange:(NSNotification *)notification
@@ -296,7 +305,7 @@
     // When textField is pre-populated, show non-animated version of floatLabel
     if ([text length] && !_storedText) {
         [self setDynamicViewProperties:UIFloatLabelAnimationTypeShow];
-        _floatLabel.textColor = _floatLabelPassiveColor;
+		_floatLabel.textColor = self.textColor;
     }
 }
 
@@ -368,10 +377,17 @@
     return UIEdgeInsetsInsetRect([super textRectForBounds:bounds], [self floatLabelInsets]);
 }
 
+- (CGRect)editingRectForBounds:(CGRect)bounds;
+{
+	return UIEdgeInsetsInsetRect([super editingRectForBounds:bounds], [self editingFloatLabelInsets]);
+}
+
+/*
 - (CGRect)editingRectForBounds:(CGRect)bounds
 {
     return UIEdgeInsetsInsetRect([super editingRectForBounds:bounds], [self floatLabelInsets]);
 }
+*/
 
 #pragma mark - UILabel (Override)
 - (void)setFloatLabelFont:(UIFont *)floatLabelFont
@@ -396,7 +412,7 @@
 -(BOOL)becomeFirstResponder
 {
     [super becomeFirstResponder];
-    
+	
     /*
      verticalPadding must be manually set if textField was initialized
      using NSAutoLayout constraints
@@ -407,7 +423,7 @@
     
     _floatLabel.textColor = _floatLabelActiveColor;
     _storedText = [self text];
-    
+	
     return YES;
 }
 
